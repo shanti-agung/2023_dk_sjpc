@@ -15,7 +15,13 @@ class SjpcscraperPipeline:
 
         ## remove space and unwanted characters in rpt table names
         rpt_raw = adapter.get('rpt_name')
-        value = rpt_raw.strip("View name:").strip("\t")
+        value = rpt_raw.replace("View name:", "").strip(" :\t")
+        value = (value.encode('ascii', 'ignore')).decode("utf-8")
         adapter['rpt_name'] = value
+
+        ## impute the missing view name
+        view_name = adapter.get('rpt_name')
+        if view_name == "":
+            adapter['rpt_name'] = "rpt.bluebook_provider_profile" 
 
         return item
